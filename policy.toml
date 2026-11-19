@@ -1,0 +1,44 @@
+# Audit policy for cdc-audit. Every knob a reviewer might want to change lives
+# here, loaded via the standard-library tomllib. Nothing in src/ hardcodes a
+# threshold, a path or a sample size; they are all read from this file so a
+# reviewer can rerun the audit under a different policy without editing code.
+
+[source]
+# The seeded changelog the shipped scenario audits. Keys receive repeated
+# updates, so the event count exceeds the key count; that excess is what makes
+# last-writer-wins reconciliation meaningful rather than trivial.
+seed = 20260219
+keys = 500
+events = 2000
+
+[delivery]
+# Bounded out-of-order delivery. An event may arrive up to `reorder_window`
+# positions late. Interior loss appears only when the reorder window can carry
+# an event behind a watermark that has already been committed, i.e. when
+# reorder_window > commit_interval. Both are offsets, not milliseconds, so the
+# scenario is machine independent.
+reorder_window = 64
+commit_interval = 16
+
+[consumer]
+# The idempotency rule the consumer uses to skip duplicates. "offset" is the
+# faithful-but-wrong industry default this project exists to expose: it drops any
+# event whose offset is at or below the committed watermark, which also drops a
+# late reordered event that was never actually applied. "version" is the correct
+# rule kept for the contrast experiment.
+skip_rule = "offset"
+
+[reconcile]
+# "version" reconciles sink against source by per-key last-writer-wins LSN and is
+# the detector this project argues for. "offset_gap" is the naive contiguous
+# -offset detector kept so the false-alarm experiment can measure what it costs.
+method = "version"
+# Fraction of keys the sampled reconciler inspects when memory is bounded. 1.0
+# means full reconciliation. Below 1.0 the detection floor is 1 / (keys * frac).
+sample_fraction = 1.0
+
+[verdict]
+# The audit fails (exit 1) when more than this many keys diverge. Zero means
+# exactly-once is asserted: any diverged key is a violation. It is a policy knob,
+# not a statistical threshold, because divergence here is counted, not estimated.
+max_diverged_keys = 0

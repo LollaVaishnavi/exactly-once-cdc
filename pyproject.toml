@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cdc-audit"
+version = "0.1.0"
+description = "Audit a change-data-capture pipeline for exactly-once violations a consumer-lag dashboard cannot see."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Vaishnavi Lolla" }]
+dependencies = []
+
+[project.optional-dependencies]
+# Experiment D (sampling floor) uses numpy for the binomial miss-probability.
+# The core audit, the CLI and make verify run on the standard library alone,
+# so a reviewer reproduces every headline number without this extra.
+experiments = ["numpy>=1.26"]
+# Dev-time evidence generation (diagrams, screenshots, demo). Never needed by
+# make verify, and deliberately excluded from CI so the JVM-free path is tested.
+evidence = ["playwright>=1.40", "cmarkgfm>=2024.1"]
+
+[project.scripts]
+cdc-audit = "cdc_audit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "experiments", "tools"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "C4", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
