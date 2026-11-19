@@ -13,11 +13,16 @@ events = 2000
 
 [delivery]
 # Bounded out-of-order delivery. An event may arrive up to `reorder_window`
-# positions late. Interior loss appears only when the reorder window can carry
-# an event behind a watermark that has already been committed, i.e. when
-# reorder_window > commit_interval. Both are offsets, not milliseconds, so the
-# scenario is machine independent.
-reorder_window = 64
+# positions late. Interior loss appears only when the reorder window exceeds the
+# consumer's reorder buffer (commit_interval below), because only then can a record
+# be released after the watermark has already passed its offset. The window is a
+# count of positions, not milliseconds, so the scenario is machine independent.
+reorder_window = 40
+
+# commit_interval is the consumer's bounded reorder buffer: the number of records
+# it holds and reorders by offset before releasing the smallest and advancing the
+# watermark. A reorder within this many positions is absorbed; a record displaced
+# further is released out of order and, under the offset skip rule, dropped.
 commit_interval = 16
 
 [consumer]
