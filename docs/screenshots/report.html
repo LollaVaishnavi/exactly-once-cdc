@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>cdc-audit report</title>
+<style>body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; color: #111;
+       background: #fff; margin: 0; padding: 32px; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+h2 { font-size: 15px; margin: 28px 0 8px; text-transform: uppercase;
+     letter-spacing: 0.04em; color: #444; }
+p.lede { color: #333; margin: 0 0 16px; max-width: 70ch; }
+table.facts { border-collapse: collapse; width: 100%; max-width: 640px; }
+table.facts td { border-top: 1px solid #e3e3e3; padding: 7px 10px; font-size: 14px; }
+td.label { color: #555; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+span.verdictbadge { display: inline-block; padding: 8px 16px; border-radius: 6px;
+       font-weight: 700; font-size: 15px; letter-spacing: 0.02em; }
+span.badgefail { background: #b3261e; color: #ffffff; }
+span.badgepass { background: #1b7a3d; color: #ffffff; }
+span.watermarkzero { color: #b3261e; font-weight: 700; }
+div.caption { color: #666; font-size: 12px; margin-top: 8px; max-width: 70ch; }</style></head>
+<body>
+<h1>cdc-audit: exactly-once reconciliation</h1>
+<p class="lede">The consumer-lag watermark reports <span class="watermarkzero">lag 0</span>, yet 40 of 500 keys hold a value the source never agreed to. The dashboard cannot see this; the reconciler can.</p>
+<h2>Verdict</h2>
+<span class="verdictbadge badgefail">EXACTLY-ONCE VIOLATED</span>
+<h2>Measurements</h2>
+<table class="facts"><tbody><tr><td class="label">Reconcile method</td><td class="num">version</td></tr><tr><td class="label">Source high offset</td><td class="num">1999</td></tr><tr><td class="label">Committed watermark</td><td class="num">1999</td></tr><tr><td class="label">Watermark lag (what the dashboard shows)</td><td class="num">0</td></tr><tr><td class="label">Records silently dropped</td><td class="num">153</td></tr><tr><td class="label">Keys diverged (what reconciliation finds)</td><td class="num">40</td></tr><tr><td class="label">  of which missing</td><td class="num">4</td></tr><tr><td class="label">  of which stale or wrong</td><td class="num">36</td></tr><tr><td class="label">Keys checked / total</td><td class="num">500 / 500</td></tr></tbody></table>
+<div class="caption">Scenario: seed 20260219, 500 keys, 2000 events,
+reorder window 40, commit interval 16,
+skip rule offset. Every figure is produced by running the pipeline.</div>
+</body></html>

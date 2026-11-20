@@ -1,0 +1,30 @@
+{
+  "note": "every terminal line is real captured output, paced by measured wall time",
+  "segments": [
+    {
+      "command": "cdc-audit --policy policy.toml",
+      "exit_code": 1,
+      "seconds": 0.056
+    },
+    {
+      "command": "cdc-audit --policy policy.toml --json",
+      "exit_code": 1,
+      "seconds": 0.055
+    },
+    {
+      "command": "python experiments/exp_detector_comparison.py",
+      "exit_code": 0,
+      "seconds": 0.069
+    },
+    {
+      "command": "python experiments/exp_sampling_floor.py",
+      "exit_code": 0,
+      "seconds": 0.457
+    },
+    {
+      "command": "make receipts",
+      "exit_code": 0,
+      "seconds": 0.096
+    }
+  ]
+}
