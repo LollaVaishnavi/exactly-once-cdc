@@ -1,0 +1,95 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Install the core with no optional extras. The core path must import and run
+      # without numpy, playwright or cmarkgfm, so installing them here would hide a
+      # broken import. A dedicated test (test_no_extras) pins that invariant too.
+      - name: Install (no extras)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install ruff pytest pytest-cov
+
+      - name: Import the package with no extras present
+        run: python -c "import cdc_audit.cli, cdc_audit.pipeline, cdc_audit.reconcile"
+
+      - name: Lint
+        run: ruff check src tests experiments tools
+
+      # Tests are their own step, not buried in the metrics collector, so a red test
+      # surfaces as a test failure rather than a CalledProcessError from a script.
+      - name: Test
+        env:
+          PYTHONPATH: src
+        run: |
+          mkdir -p reports
+          python -m pytest -q \
+            --junitxml=reports/junit.xml \
+            --cov=cdc_audit \
+            --cov-report=json:reports/coverage.json \
+            --cov-report=term-missing
+
+      - name: Enforce the coverage floor
+        run: |
+          python - <<'PY'
+          import json, sys
+          pct = json.load(open("reports/coverage.json"))["totals"]["percent_covered"]
+          floor = 100.0
+          print(f"line coverage {pct:.2f}%, floor {floor:.2f}%")
+          sys.exit(0 if pct >= floor else 1)
+          PY
+
+      # Re-measure every figure from the reports written above (so the suite does not
+      # run twice), then fail the build if any document drifted from a measured number.
+      - name: Receipts (re-measure and number-check)
+        env:
+          PYTHONPATH: src
+        run: |
+          python tools/collect_metrics.py --skip-tests
+          python tools/check_numbers.py
+
+      - name: Publish the awkward table to the job summary
+        if: always()
+        env:
+          PYTHONPATH: src
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          m = json.load(open("docs/metrics.json"))["metrics"]
+          print("### cdc-audit: what the measurement found\n")
+          print("| figure | value |")
+          print("|---|---|")
+          print(f"| watermark lag (dashboard) | {m['watermark_lag']} |")
+          print(f"| records silently dropped | {m['records_dropped']} |")
+          print(f"| keys actually diverged | {m['diverged_keys']} of {m['keys_total']} |")
+          print(f"| offset-gap false alarms (transactional topic) | {m['offset_gap_false_alarms']} |")
+          print(f"| version reconciler false alarms | {m['version_false_alarms']} |")
+          print(f"| miss a 1-key loss sampling 10% | {m['p_miss_single_key_at_10pct']}% |")
+          print(f"| tests / line coverage | {m['tests_total']} / {m['coverage_line_pct']}% |")
+          PY
+
+      - name: Upload experiment JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: experiments-${{ matrix.python-version }}
+          path: docs/experiments/*.json
