@@ -1,0 +1,21 @@
+{
+  "keys_total": 500,
+  "p_miss_single_key_at_10pct": 90,
+  "p_miss_single_key_at_50pct": 50,
+  "p_miss_table_percent": {
+    "loss1_frac10": 90,
+    "loss1_frac100": 0,
+    "loss1_frac25": 75,
+    "loss1_frac50": 50,
+    "loss40_frac10": 1.2,
+    "loss40_frac100": 0,
+    "loss40_frac25": 0,
+    "loss40_frac50": 0,
+    "loss5_frac10": 58.9,
+    "loss5_frac100": 0,
+    "loss5_frac25": 23.6,
+    "loss5_frac50": 3.1
+  },
+  "pct_sample_for_95pct_confidence_single_key": 95,
+  "shipped_loss": 40
+}

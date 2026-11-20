@@ -1,0 +1,7 @@
+{
+  "interior_diverged_keys": 40,
+  "interior_watermark_lag": 0,
+  "tail_diverged_keys": 48,
+  "tail_dropped": 50,
+  "tail_watermark_lag": 50
+}

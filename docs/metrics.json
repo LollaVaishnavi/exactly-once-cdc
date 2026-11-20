@@ -1,0 +1,92 @@
+{
+  "anchors": {
+    "coverage_line_pct": [
+      "{}% line coverage",
+      "{} percent line coverage"
+    ],
+    "diverged_keys": [
+      "{} of 500 keys",
+      "{} keys hold",
+      "{} keys diverged"
+    ],
+    "events_total": [
+      "{} events"
+    ],
+    "harmless_drops": [
+      "{} of those drops"
+    ],
+    "keys_total": [
+      "of {} keys",
+      "{} keys total"
+    ],
+    "missing_keys": [
+      "{} missing"
+    ],
+    "offset_gap_false_alarms": [
+      "{} false alarms",
+      "{} marker holes"
+    ],
+    "p_miss_single_key_at_10pct": [
+      "misses it {}%",
+      "{}% of the time"
+    ],
+    "p_miss_single_key_at_50pct": [
+      "{}% of the time",
+      "{} percent"
+    ],
+    "pct_sample_for_95pct_confidence": [
+      "{}% of the keys",
+      "{} percent of the keys"
+    ],
+    "records_dropped": [
+      "{} records",
+      "dropped {}"
+    ],
+    "stale_keys": [
+      "{} stale"
+    ],
+    "tail_diverged_keys": [
+      "{} of 500 keys",
+      "{} keys when the loss is at the tail"
+    ],
+    "tail_lag": [
+      "lag of {}",
+      "lag {}"
+    ],
+    "tests_total": [
+      "{} tests"
+    ],
+    "version_false_alarms": [
+      "{} false alarms",
+      "raises {}"
+    ],
+    "watermark_lag": [
+      "lag of {}",
+      "lag reads {}",
+      "reports lag {}"
+    ]
+  },
+  "checked_documents": [
+    "README.md"
+  ],
+  "metrics": {
+    "coverage_line_pct": 100,
+    "diverged_keys": 40,
+    "events_total": 2000,
+    "harmless_drops": 113,
+    "keys_total": 500,
+    "missing_keys": 4,
+    "offset_gap_false_alarms": 99,
+    "p_miss_single_key_at_10pct": 90,
+    "p_miss_single_key_at_50pct": 50,
+    "pct_sample_for_95pct_confidence": 95,
+    "records_dropped": 153,
+    "stale_keys": 36,
+    "tail_diverged_keys": 48,
+    "tail_lag": 50,
+    "tests_total": 98,
+    "version_false_alarms": 0,
+    "watermark_lag": 0
+  },
+  "note": "every value is produced by running the suite and the four experiments"
+}

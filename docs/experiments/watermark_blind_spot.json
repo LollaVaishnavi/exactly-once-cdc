@@ -1,0 +1,15 @@
+{
+  "diverged_keys": 40,
+  "keys_total": 500,
+  "missing_keys": 4,
+  "records_dropped": 153,
+  "scenario": {
+    "commit_interval": 16,
+    "events": 2000,
+    "keys": 500,
+    "reorder_window": 40,
+    "seed": 20260219
+  },
+  "stale_keys": 36,
+  "watermark_lag": 0
+}

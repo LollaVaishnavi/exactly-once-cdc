@@ -1,0 +1,8 @@
+{
+  "marker_every": 20,
+  "marker_width": 2,
+  "note": "version_false_alarms is structural, not a sampling estimate: the version reconciler never inspects offsets, so a marker hole can never raise an alarm. A test pins this invariant.",
+  "offset_gap_alarms": 99,
+  "offset_gap_false_alarms": 99,
+  "version_false_alarms": 0
+}
